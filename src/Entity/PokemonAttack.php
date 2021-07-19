@@ -5,36 +5,39 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\PokemonAttackRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
- * @ApiResource()
  * @ORM\Entity(repositoryClass=PokemonAttackRepository::class)
  */
 class PokemonAttack
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
     /**
      * @ORM\Column(type="integer")
      */
     private $level;
 
     /**
+     * @ORM\Id
      * @ORM\ManyToOne(targetEntity=Attack::class, inversedBy="pokemonAttacks")
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      */
     private $attack;
 
     /**
+     * @ORM\Id
      * @ORM\ManyToOne(targetEntity=Pokemon::class, inversedBy="pokemonAttacks")
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      */
     private $pokemon;
+
+    public function __construct(Attack $attack, Pokemon $pokemon)
+    {
+        $this->attack = $attack;
+        $this->pokemon = $pokemon;
+    }
 
     public function getId(): ?int
     {
@@ -58,22 +61,8 @@ class PokemonAttack
         return $this->attack;
     }
 
-    public function setAttack(?Attack $attack): self
-    {
-        $this->attack = $attack;
-
-        return $this;
-    }
-
     public function getPokemon(): ?Pokemon
     {
         return $this->pokemon;
-    }
-
-    public function setPokemon(?Pokemon $pokemon): self
-    {
-        $this->pokemon = $pokemon;
-
-        return $this;
     }
 }
